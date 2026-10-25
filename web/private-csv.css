@@ -1,0 +1,7 @@
+/* Private CSV page. No external assets or third-party analytics. */
+.private-file{width:100%;max-width:620px;display:block;border:1px dashed #b1c5bd;border-radius:12px;padding:18px;margin:16px 0;background:#f5fbf8;color:#173f3b}
+.private-file::file-selector-button{padding:10px 13px;border-radius:8px;border:1px solid #a6caba;background:#e0f3e9;color:#124f42;font-weight:700;margin-right:12px;cursor:pointer}
+#privateCsvStatus{padding:12px 15px;border-radius:9px;background:#f1f7f4;border:1px solid #d8eae1;color:#32564c;margin-top:14px;line-height:1.5}
+.private-months{display:grid;gap:12px;margin:20px 0 4px}.private-month{display:grid;grid-template-columns:95px 1fr 1fr;gap:10px;padding:11px;border:1px solid #e0e9e5;border-radius:11px;align-items:center}
+.private-month>div{display:grid;grid-template-columns:48px minmax(50px,1fr) minmax(90px,auto);align-items:center;gap:6px;min-width:0}.private-month b{font-weight:750;font-size:12px;color:#254b42}.private-month span,.private-month small{font-size:11px;color:#5c6e68}.private-month small{text-align:right;white-space:nowrap}.private-track{height:11px;border-radius:99px;background:#e9f0ed;overflow:hidden;min-width:20px}.private-track i{display:block;height:100%;border-radius:99px}.private-track .private-credit{background:#09805e}.private-track .private-debit{background:#e1a048}
+@media(max-width:700px){.private-month{grid-template-columns:1fr}.private-month>div{grid-template-columns:50px minmax(40px,1fr) minmax(94px,auto)}}
