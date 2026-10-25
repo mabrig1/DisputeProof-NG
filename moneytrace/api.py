@@ -10,9 +10,11 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from .parsing import MAX_FILE_BYTES, StatementError, parse_file
 from .analysis import analyze
 from .fixtures import demo
+from .integrations import (require_operator, integration_flags, mongodb_probe,
+                           ExplainDemoRequest, finding_for_demo, explain_synthetic)
 
 BASE = Path(__file__).resolve().parents[1]
-app = FastAPI(title="DisputeProof NG · MoneyTrace", version="0.4.0", docs_url=None, redoc_url=None)
+app = FastAPI(title="DisputeProof NG · MoneyTrace", version="0.6.0", docs_url=None, redoc_url=None)
 
 
 def local_upload_allowed(request: Request) -> bool:
@@ -70,7 +72,7 @@ app.add_middleware(SecurityHeaders)
 
 @app.get("/api/health")
 def health():
-    return {"status":"ok", "mode":"demo_only_by_default", "storage":"none", "version":"0.4.0"}
+    return {"status":"ok", "mode":"demo_only_by_default", "storage":"none", "version":"0.6.0"}
 
 
 @app.get("/api/config")
@@ -84,6 +86,24 @@ def config(request: Request):
 @app.get("/api/demo")
 def synthetic_demo():
     return demo(datetime.now(timezone.utc).isoformat(timespec="seconds"))
+
+
+@app.get("/api/operator/check")
+async def operator_check(request: Request):
+    require_operator(request)
+    flags = integration_flags()
+    return {**flags, "mongodb_connection": await mongodb_probe(),
+            "openrouter_connection": "not_tested",
+            "warning": "Diagnostics probe does not write any database records or call the AI provider."}
+
+
+@app.post("/api/operator/explain-demo")
+async def operator_explain_demo(payload: ExplainDemoRequest, request: Request):
+    require_operator(request)
+    finding = finding_for_demo(payload.finding_id)
+    if finding is None:
+        raise HTTPException(status_code=404, detail="Synthetic finding not found.")
+    return await explain_synthetic(finding, payload.purpose)
 
 
 @app.post("/api/analyze")
