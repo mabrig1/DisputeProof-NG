@@ -43,3 +43,11 @@ def test_local_mode_rejects_foreign_origin(monkeypatch):
     r = local.post('/api/analyze', headers={'Origin':'https://strange.example'},
                    files={'files': ('safe.csv', SAMPLES['Demo-Access-Account.csv'].encode(), 'text/csv')})
     assert r.status_code == 403
+
+
+def test_hosted_environment_never_enables_uploads(monkeypatch):
+    monkeypatch.setenv('MONEYTRACE_UPLOAD_MODE', 'local')
+    monkeypatch.setenv('VERCEL', '1')
+    client = TestClient(app, base_url='http://127.0.0.1:8000')
+    assert client.get('/api/config').json()['uploads_enabled'] is False
+    assert upload(client).status_code == 403
