@@ -113,6 +113,9 @@ function privateAuditCSV(text){
     let debit=privateCents(get(row,'debit'));
     let credit=privateCents(get(row,'credit'));
     const amount=privateCents(get(row,'amount')),type=get(row,'type').toLowerCase();
+    const rawDebit=get(row,'debit').trim(),rawCredit=get(row,'credit').trim(),rawAmount=get(row,'amount').trim();
+    if((rawDebit && debit===null) || (rawCredit && credit===null) ||
+       (rawAmount && amount===null)){skipped++;continue}
     if(debit===null&&credit===null&&amount!==null){
       if(/^(?:debit|dr|withdrawal|outflow)$/.test(type))debit=Math.abs(amount),credit=0;
       else if(/^(?:credit|cr|deposit|inflow)$/.test(type))credit=Math.abs(amount),debit=0;
@@ -236,7 +239,7 @@ function privateCsvBind(){
       privateCsvState.error='Choose a UTF-8 CSV file no larger than 2 MB.';render();return;
     }
     try{
-      // File.text() reads in-browser only. Do not append the file to FormData or call fetch().
+      // File.text() reads in-browser only. No request leaves this audit flow.
       const text=await file.text();
       privateCsvState.report=privateAuditCSV(text);
     }catch(err){privateCsvState.error=err.message||'Could not parse this CSV.';}
