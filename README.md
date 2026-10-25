@@ -33,7 +33,7 @@ MONEYTRACE_UPLOAD_MODE=local uvicorn main:app --host 127.0.0.1 --port 8000
 $env:MONEYTRACE_UPLOAD_MODE='local'; uvicorn main:app --host 127.0.0.1 --port 8000
 ```
 
-The API permits these uploads only when the request Host and client are loopback. The local-only gate is **not a substitute for authorization**; do not tunnel, proxy, or deploy it for real customers. Stop local mode after testing.
+The API permits these uploads only when the request Host and client are loopback and no known hosted-environment flag (such as VERCEL) is present. The local-only gate is **not a substitute for authorization**; do not tunnel, proxy, or deploy it for real customers. Stop local mode after testing.
 
 ## Tests
 
@@ -41,6 +41,14 @@ The API permits these uploads only when the request Host and client are loopback
 pip install pytest httpx
 python -m pytest -q
 ```
+
+## v0.4 Audit intelligence and coverage (October 25, 2026)
+
+- **Arithmetic checkability** by statement: parsed/skipped rows, checkable adjacent running-balance pairs, arithmetic mismatches, date ordering and observed date bounds. Checkability **cannot certify completeness or authenticity**.
+- One-to-one **candidate pairing** for likely self-transfers and failed-debit reversals; incoming credits cannot be reused for multiple outgoing transactions. Ambiguous candidates remain unassigned.
+- Date-range-aware review findings distinguish limited observations from stronger candidate checks without asserting missing funds or financial settlement.
+- Dashboard visualizations and matching/coverage sections in the downloadable CSV and JSON reports.
+- 11 additional synthetic security and matching tests; no third-party chart or network services.
 
 ## v0.3 Safe staging boundary (not live customer ready)
 
@@ -77,6 +85,8 @@ Vercel supports zero-configuration FastAPI deployments for a root `main.py` expo
 
 - `moneytrace/parsing.py`: file ingestion and conservative normalization.
 - `moneytrace/analysis.py`: deterministic rule engine.
+- `moneytrace/matching.py`: unique transfer/reversal candidate matching.
+- `moneytrace/quality.py`: arithmetic checkability and coverage limitations.
 - `moneytrace/api.py`: upload endpoint and security headers.
 - `moneytrace/fixtures.py`: fictional demo statements.
 - `web/`: dependency-free responsive frontend.
