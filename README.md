@@ -42,6 +42,34 @@ pip install pytest httpx
 python -m pytest -q
 ```
 
+## v0.6 Vercel MongoDB + OpenRouter safe integration (October 25, 2026)
+
+The Git-connected Vercel project is `dispute-proof-ng`. Production environment variables `MONGODB_URI` and `OPENROUTER_API_KEY` have been observed as present, but their decrypted values were **not** read. They are configured for **production only**, so normal Git-branch preview deployments will not have them.
+
+### Required Vercel backend environment variables
+
+| Variable | Purpose | Value / security |
+| --- | --- | --- |
+| `MONGODB_URI` | Read-only operator connectivity test | Already configured in **Production**. Keep secret. |
+| `OPENROUTER_API_KEY` | Optional synthetic-case AI explanations | Already configured in **Production**. Keep secret. |
+| `MONGODB_DB_NAME` | Reserved database for future scoped persistence | `disputeproof` (no transaction persistence enabled). |
+| `MONEYTRACE_OPERATOR_TOKEN` | Independent authorization for diagnostics and AI calls | Generate 32+ random characters directly inside Vercel. Never commit or paste in public chat. |
+| `OPENROUTER_MODEL` | Explicit model to avoid unknown-cost default routing | e.g. a specific model ID from your approved OpenRouter account. |
+| `MONEYTRACE_AI_ENABLED` | Explicit opt-in to third-party calls | `false` until verified, then `true` for authorized use only. |
+
+**Do not enable uploads or turn on live statement persistence.** The operator control center is designed for synthetic data only. This change does not claim that production Atlas connectivity has been tested or that an OpenRouter request succeeded.
+
+### Protected routes
+
+- `GET /api/operator/check`: requires `Authorization: Bearer <MONEYTRACE_OPERATOR_TOKEN>`; pings MongoDB's admin command only (no reads/writes of user collections) and reports configuration flags without returning credentials. No OpenRouter request is made by this endpoint.
+- `POST /api/operator/explain-demo`: requires the same operator token, `MONEYTRACE_AI_ENABLED=true`, configured key, explicit model, and **a server-generated fictional finding ID**, plus one of `explain`, `checklist`, `complaint_draft`. Raw account data, prompts and uploaded report bodies are not accepted.
+- `GET /api/config`: still indicates uploads disabled in Vercel-hosted mode.
+- `POST /api/analyze`: still returns HTTP 403 on hosted deployments.
+
+In the web UI open **AI & Connectors**. Paste your separately generated operator token into the temporary password box to run the read-only diagnostic or ask OpenRouter to explain a fictional finding. The browser does not save the token. This is an **operator-only** demo; do not give the token to ordinary users.
+
+Before any production release: narrow the Atlas `disputeproof` user's role to `readWrite` on **only** `disputeproof`, verify database IP-access and secret permissions, protect Vercel deployments and custom domains, set spending limits in OpenRouter, add robust distributed throttling/audit access logs, perform NDPA privacy review, implement tenant authentication and retention controls, and separately approve customer data processing.
+
 ## v0.5 Interactive visualization (October 25, 2026)
 
 - Interactive account selector, last-30/90-recorded-day lookback, monthly/daily grouping and credits-vs-debits/net-flow toggle.
