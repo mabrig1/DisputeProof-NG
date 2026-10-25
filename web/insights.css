@@ -4,7 +4,7 @@
 .insight-wide{grid-column:span 2}
 .viz-scroll{overflow-x:auto;margin:6px 16px 0;max-width:calc(100% - 32px);padding:8px 0 1px}
 .viz-scroll svg{height:auto;max-height:300px;width:100%;display:block;overflow:visible}
-.viz-scroll svg[style]{width:auto;max-width:none}
+.viz-scroll svg[width]{width:auto;max-width:none}
 .svg-axis{font-size:11px;fill:#6b7d88;font-family:Inter,Arial,sans-serif}
 .viz-key{display:flex;justify-content:center;gap:20px;color:#627481;font-size:12px;margin:5px auto}
 .viz-key i,.viz-legend i{display:inline-block;width:10px;height:10px;margin-right:7px;border-radius:3px}
@@ -19,10 +19,19 @@
 .viz-severity{padding:28px 25px}
 .viz-severity-row{display:grid;grid-template-columns:60px 1fr 28px;gap:10px;align-items:center;margin-bottom:21px;font-size:12px;text-transform:capitalize;color:#41565e}
 .viz-severity-row>div{background:#f1f3f5;border-radius:50px;height:14px;overflow:hidden}
-.viz-severity-row i{display:block;height:100%;border-radius:50px;background:#6899a1}
+.viz-severity-row svg{display:block;width:100%;height:100%;border-radius:50px;overflow:hidden}
 .viz-severity-row .sev-high{background:#d46764}.viz-severity-row .sev-medium{background:#e1a44b}.viz-severity-row .sev-info{background:#6ca0cb}
 .viz-severity-row strong{text-align:right}
 .viz-empty{padding:45px 22px;color:#607382;text-align:center}
 .viz-caption{color:#6a7c87;font-size:11px;padding:0 24px}
 @media(max-width:1050px){.insight-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:730px){.insights-grid{display:block}.insight-card{margin:15px 0}.insight-wide{grid-column:auto}.insight-stats{gap:9px}.viz-donut{flex-direction:column;align-items:stretch}.viz-donut svg{max-width:100%;margin:auto;width:170px}.viz-legend{width:100%}}
+
+.viz-swatch-0{background:#0f766e}.viz-stroke-0{stroke:#0f766e}
+.viz-swatch-1{background:#e4a63e}.viz-stroke-1{stroke:#e4a63e}
+.viz-swatch-2{background:#5f86ce}.viz-stroke-2{stroke:#5f86ce}
+.viz-swatch-3{background:#d46b5a}.viz-stroke-3{stroke:#d46b5a}
+.viz-swatch-4{background:#7e6db7}.viz-stroke-4{stroke:#7e6db7}
+.viz-swatch-5{background:#5e9b91}.viz-stroke-5{stroke:#5e9b91}
+.viz-swatch-6{background:#b3738f}.viz-stroke-6{stroke:#b3738f}
+.viz-swatch-7{background:#7893a6}.viz-stroke-7{stroke:#7893a6}
