@@ -10,7 +10,7 @@ from typing import Literal
 
 import httpx
 from fastapi import HTTPException, Request
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 
 def operator_allowed(request: Request) -> bool:
@@ -65,6 +65,7 @@ async def mongodb_probe() -> str:
 
 
 class ExplainDemoRequest(BaseModel):
+    model_config = ConfigDict(extra='forbid')
     finding_id: str = Field(min_length=1, max_length=50, pattern=r"^F-[A-Z0-9]{10}$")
     purpose: Literal["explain", "checklist", "complaint_draft"] = "explain"
 
