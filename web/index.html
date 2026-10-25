@@ -10,7 +10,9 @@
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='17' fill='%230d222b'/%3E%3Cpath d='M32 9 50 17V29Q50 44 32 54 14 44 14 29V17Z' fill='none' stroke='%237ce5ba' stroke-width='5'/%3E%3Cpath d='m22 32 8 8 14-17' fill='none' stroke='%237ce5ba' stroke-width='5'/%3E%3C/svg%3E" />
   <link rel="stylesheet" href="/static/styles.css" />
   <link rel="stylesheet" href="/static/insights.css" />
+  <link rel="stylesheet" href="/static/private-csv.css" />
   <script src="/static/insights.js" defer></script>
+  <script src="/static/private-csv.js" defer></script>
   <script src="/static/app.js" defer></script>
 </head>
 <body>
@@ -20,7 +22,8 @@
       <div class="sidebar-label">WORKSPACE</div>
       <nav class="nav" id="sidebarNav">
         <button type="button" class="nav-link active" data-page="overview"><span class="nav-icon" data-icon="grid"></span><span>Overview</span></button>
-        <button type="button" class="nav-link" data-page="upload"><span class="nav-icon" data-icon="upload"></span><span>Statement audit</span></button>
+        <button type="button" class="nav-link" data-page="privatecsv"><span class="nav-icon" data-icon="upload"></span><span>Private CSV audit</span></button>
+        <button type="button" class="nav-link" data-page="upload"><span class="nav-icon" data-icon="lock"></span><span>Hosted uploads (locked)</span></button>
         <button type="button" class="nav-link" data-page="insights"><span class="nav-icon" data-icon="graph"></span><span>Insights & charts</span></button>
         <button type="button" class="nav-link" data-page="investigations"><span class="nav-icon" data-icon="radar"></span><span>Investigations</span><span class="pill" id="navFindingCount">0</span></button>
         <button type="button" class="nav-link" data-page="transactions"><span class="nav-icon" data-icon="list"></span><span>Transactions</span></button>
@@ -33,7 +36,7 @@
       </nav>
       <div class="sidebar-spacer"></div>
       <div class="privacy-mini"><div class="privacy-mini-icon" data-icon="lock"></div><b>Privacy by design</b><p>Processed in request memory. No personal transaction storage in this demo; operator checks are read-only.</p><span class="privacy-mini-mark">● &nbsp; STATELESS MODE</span></div>
-      <div class="sidebar-footer">MABRIG TECHNOLOGIES <span>·</span> v0.6 SECURE INTEGRATIONS</div>
+      <div class="sidebar-footer">MABRIG TECHNOLOGIES <span>·</span> v0.7 LOCAL FINANCIAL AUDIT</div>
     </aside>
 
     <div class="workspace">
@@ -44,7 +47,7 @@
   </div>
   <nav class="mobile-nav" aria-label="Mobile navigation" id="mobileNav">
     <button type="button" data-page="overview" class="active"><span data-icon="grid"></span>Home</button>
-    <button type="button" data-page="upload"><span data-icon="upload"></span>Audit</button>
+    <button type="button" data-page="privatecsv"><span data-icon="upload"></span>Private audit</button>
     <button type="button" data-page="insights"><span data-icon="graph"></span>Insights</button>
     <button type="button" data-page="transactions"><span data-icon="list"></span>Activity</button>
     <button type="button" data-page="evidence"><span data-icon="shield"></span>Evidence</button>

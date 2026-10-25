@@ -1,6 +1,6 @@
 # DisputeProof NG — MoneyTrace MVP
 
-Working, mobile-friendly bank statement analyzer and transaction-dispute evidence review prototype by Mabrig Technologies. **Release status: synthetic demonstration / private proof-of-concept. Not approved for live customer financial data.**
+Working, mobile-friendly bank statement analyzer and transaction-dispute evidence review prototype by Mabrig Technologies. **Release status: synthetic cloud demonstration plus browser-local CSV analysis. No permission to upload or persist customer bank statements on the backend.**
 
 ## Real functions
 
@@ -41,6 +41,30 @@ The API permits these uploads only when the request Host and client are loopback
 pip install pytest httpx
 python -m pytest -q
 ```
+
+## v0.7 Browser-local CSV financial audit (October 25, 2026)
+
+**Private CSV audit** allows an individual to use the site for basic checks without submitting banking statements to the FastAPI endpoint or MongoDB/OpenRouter:
+
+- In-browser UTF-8 CSV parsing for up to 2 MB and 5,000 transaction rows (comma, semicolon, tab and pipe supported).
+- Deterministic integer-kobo reconciliation: parsed debits, credits, net movement, running-balance mismatches and repeated debit references; date-order uncertainty and skipped rows are displayed.
+- Simple monthly credit/debit bars and a review table of **row numbers and findings**, omitting statement descriptions and transaction reference values.
+- The optional aggregate CSV export includes month-level totals and checkability counts, deliberately excluding individual transaction descriptions, references and account identifiers.
+- All processing in `web/private-csv.js` uses the browser File API. It makes no network, localStorage, IndexedDB or AI request, and does not save the original statement.
+- Users can clear the in-memory results or close their tab. This avoids *our application* uploading the selected file, but it does not guarantee a device/browser extension is safe.
+- Only **CSV** is supported on this private browser-first path; PDF/XLSX remain restricted to loopback-only development and are not accepted on Vercel.
+- File checks support unambiguous Date + Debit/Credit or a signed Amount/Type column. Exact formats supported: `YYYY-MM-DD` and day-first `DD/MM/YYYY`. Invalid/ambiguous rows are skipped, never imputed.
+- **No fraud claim:** neither successful arithmetic nor a flag proves a financial loss, settlement failure or original-document authenticity.
+
+### Testing
+
+```bash
+node --check web/private-csv.js
+node --test tests/test_private_csv.cjs
+python -m pytest -q
+```
+
+The feature is deliberately separate from the bank-upload API. Do not enable hosted multipart uploads or persistent customer financial records on account of this addition.
 
 ## v0.6 Vercel MongoDB + OpenRouter safe integration (October 25, 2026)
 
