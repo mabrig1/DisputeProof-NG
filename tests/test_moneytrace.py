@@ -70,11 +70,12 @@ def test_no_guess_on_unsupported_or_empty():
         parse_file(b'', 'bank.csv', NOW)
 
 
-def test_api_is_stateless_and_limits_uploads():
-    client=TestClient(app)
+def test_api_is_stateless_and_limits_uploads(monkeypatch):
+    monkeypatch.setenv("MONEYTRACE_UPLOAD_MODE", "local")
+    client=TestClient(app, base_url="http://127.0.0.1:8000")
     demo_response=client.get('/api/demo')
     assert demo_response.status_code==200
-    assert demo_response.headers['cache-control']=='no-store'
+    assert demo_response.headers['cache-control']=='no-store, private'
     assert "'self'" in demo_response.headers['content-security-policy']
     response=client.post('/api/analyze',files={'files':('statement.csv',SAMPLES['Demo-Access-Account.csv'].encode(),'text/csv')})
     assert response.status_code==200, response.text
