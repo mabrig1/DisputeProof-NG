@@ -62,7 +62,7 @@ test('graph respects account filter and offers clear scoped period',()=>{
  const v=context();
  vm.runInContext("vizFocus.account='1';vizFocus.window='30'",v);
  const result=vm.runInContext('vizFocusResults()',v);
- assert.ok(result.includes('2026-10-20'));
+ assert.ok(result.includes('2026-09-26'));
  vm.runInContext("vizFocus.window='all';vizFocus.account='0'",v);
  assert.ok(vm.runInContext('vizFocusResults()',v).includes('Cash-flow timeline'));
 });
