@@ -42,6 +42,15 @@ pip install pytest httpx
 python -m pytest -q
 ```
 
+## v0.5 Interactive visualization (October 25, 2026)
+
+- Interactive account selector, last-30/90-recorded-day lookback, monthly/daily grouping and credits-vs-debits/net-flow toggle.
+- Recomputed filtered credits, debits, net **movement**, debit categories, weekday distributions, and exact-value accessible data table (no third-party chart services).
+- Download filtered aggregate CSV or current chart as an SVG. CSV text labels are escaped against spreadsheet-formula injection.
+- Filters operate only on already-loaded report rows in the browser. No additional upload, external tracking, or bank-network request.
+- Period windows are relative to the **latest date in the uploaded records**, not today's date; absence of rows is not evidence of no transactions.
+- All-account totals may double-count transfers between owned accounts; net movement across unrelated accounts is not a balance.
+
 ## v0.4 Audit intelligence and coverage (October 25, 2026)
 
 - **Arithmetic checkability** by statement: parsed/skipped rows, checkable adjacent running-balance pairs, arithmetic mismatches, date ordering and observed date bounds. Checkability **cannot certify completeness or authenticity**.
