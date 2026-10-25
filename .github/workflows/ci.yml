@@ -19,5 +19,6 @@ jobs:
           node-version: '22'
       - run: python -m pip install -r requirements.txt pytest httpx reportlab
       - run: python -m pytest -q
-      - run: node --check web/app.js && node --check web/insights.js
+      - run: node --check web/app.js && node --check web/insights.js && node --check web/private-csv.js
       - run: node --test tests/test_visual_explorer.cjs
+      - run: node --test tests/test_private_csv.cjs
