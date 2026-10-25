@@ -63,7 +63,7 @@ def test_api_includes_analytics_and_no_store():
     resp=client.get('/api/demo')
     assert resp.status_code==200
     assert resp.json()['analytics']['accounts']
-    assert resp.headers['cache-control']=='no-store'
+    assert resp.headers['cache-control']=='no-store, private'
     js=client.get('/static/insights.js')
     assert js.status_code==200 and b'vizFlowChart' in js.content
     assert "insights.js" in client.get('/').text
