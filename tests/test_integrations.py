@@ -98,8 +98,8 @@ def test_ai_not_allowed_to_accept_arbitrary_transaction_bodies(monkeypatch):
         "statement": "Private financial statement, must not be forwarded",
         "transactions": [{"account": "1234567890"}],
     })
-    # Ignore extra fields: explanation can only access server-side fixture.
-    assert result.status_code in (200, 502)  # No uncontrolled custom content accepted by schema.
+    # Reject any additional personal-data fields before the provider is called.
+    assert result.status_code == 422
 
 
 def test_reject_unknown_finding_before_external_api(monkeypatch):
