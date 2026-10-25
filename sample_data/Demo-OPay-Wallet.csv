@@ -1,0 +1,4 @@
+Date,Description,Debit,Credit,Balance,Reference
+2026-10-01,Opening balance,0,0,10000,OPENING
+2026-10-03,Received transfer from own Access,0,40000,50000,OPC288
+2026-10-07,Electricity bill,4500,0,45500,EBILL04
