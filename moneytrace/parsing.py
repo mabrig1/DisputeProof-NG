@@ -210,7 +210,7 @@ def parse_rows(rows, filename, fmt, digest, timestamp) -> Statement:
         ref = str(cell(row, "reference") or "").strip()[:75]
         bal = number(cell(row, "balance"))
         stmt.transactions.append(Transaction(
-            id=f"{digest[:9]}-{rownum}", date=d, description=desc,
+            id=f"{digest[:9]}-{hashlib.sha256(filename.encode()).hexdigest()[:7]}-{rownum}", date=d, description=desc,
             debit=debit, credit=credit, balance=bal, reference=ref,
             account=stmt.account, source=filename, line=rownum,
         ))
@@ -275,7 +275,7 @@ def parse_pdf(raw, filename, digest, timestamp):
             continue
         ref_match = re.search(r"\b(?:REF|RRN|SESSION)[:# -]*([A-Za-z0-9-]{6,})", desc, re.I)
         stmt.transactions.append(Transaction(
-            id=f"{digest[:9]}-{lineno}", date=d, description=desc[:320],
+            id=f"{digest[:9]}-{hashlib.sha256(filename.encode()).hexdigest()[:7]}-{lineno}", date=d, description=desc[:320],
             debit=debit, credit=credit, balance=balance,
             reference=ref_match.group(1) if ref_match else "", account=stmt.account,
             source=filename, line=lineno, confidence="review_needed",

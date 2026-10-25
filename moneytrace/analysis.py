@@ -7,6 +7,8 @@ import hashlib
 import re
 from .parsing import Statement, Transaction
 from .insights import build_insights
+from .matching import reconcile_candidates
+from .quality import reconciliation_quality
 
 CENT = Decimal("0.01")
 
@@ -124,53 +126,10 @@ def analyze(statements: list[Statement], generated_at: str) -> dict:
             else:
                 seen_desc[desc_key] = t
 
-    # Reversal watch: ONLY explicitly failed/pending debit descriptions.
-    for s in statements:
-        for t in s.transactions:
-            if t.debit <= 0 or not re.search(r"\b(failed|unsuccessful|declined)\b", t.description, re.I):
-                continue
-            candidates = [
-                x for x in s.transactions if x.credit == t.debit
-                and 0 <= (date.fromisoformat(x.date) - date.fromisoformat(t.date)).days <= 14
-                and (bool(t.reference and x.reference and t.reference.lower() == x.reference.lower())
-                     or re.search(r"revers|refund|failed", x.description, re.I))
-            ]
-            if not candidates:
-                issues.append(make_finding(
-                    "unmatched_reversal", "high", "No matching reversal in uploaded statement",
-                    f"A ₦{t.debit:,.2f} debit is labelled failed or declined, but no matching reversal was identified in the uploaded date range.",
-                    [t], t.debit,
-                    "Check whether the reversal falls outside the statement period or appears under a different reference; contact the bank if still unresolved.", "medium",
-                ))
-
-    # Cross-account matching is informative, not an assertion of interbank settlement.
-    matched_transfers = 0
-    if len(statements) > 1:
-        for s in statements:
-            other_credits = [x for other in statements if other is not s for x in other.transactions if x.credit > 0]
-            for t in s.transactions:
-                if t.debit <= 0 or not re.search(r"transfer|\btrf\b", t.description, re.I):
-                    continue
-                # Compare ONLY transfers explicitly described as between the user's
-                # accounts. Payments to third parties aren't expected in other uploads.
-                if re.search(r"\b(failed|declined|unsuccessful)\b",t.description,re.I):
-                    continue
-                known_targets = [other.account.lower().split(' ')[1:-1] for other in statements if other is not s]
-                target_tokens = {token for tokens in known_targets for token in tokens if len(token)>3}
-                desc_low = t.description.lower()
-                if not (re.search(r"\b(self|own|my account|my wallet)\b",desc_low)
-                        or any(tok in desc_low for tok in target_tokens)):
-                    continue
-                candidates = [x for x in other_credits if x.credit == t.debit and abs((date.fromisoformat(x.date)-date.fromisoformat(t.date)).days) <= 2]
-                if candidates:
-                    matched_transfers += 1
-                else:
-                    issues.append(make_finding(
-                        "unmatched_transfer", "info", "Outgoing transfer not matched across uploads",
-                        f"This ₦{t.debit:,.2f} transfer has no equal-sized credit within two days in the OTHER uploaded statements. The recipient could be an outside account.",
-                        [t], t.debit,
-                        "Only investigate if you expected this payment to arrive in another account you uploaded. Confirm beneficiary and transaction reference.", "low",
-                    ))
+    # Match candidate credits once only; never assert settlement or refund.
+    match_audit, candidate_issues = reconcile_candidates(statements, make_finding)
+    issues.extend(candidate_issues)
+    matched_transfers = match_audit['possible_cross_account_matches']
 
     spending = defaultdict(lambda: Decimal("0"))
     monthly = defaultdict(lambda: {"debits":Decimal("0"), "credits":Decimal("0")})
@@ -181,7 +140,7 @@ def analyze(statements: list[Statement], generated_at: str) -> dict:
     issues.sort(key=lambda f: {"high":0,"medium":1,"info":2}.get(f["severity"],3))
     # Do not sum issue amounts: the same transaction can appear in several findings.
     return {
-        "schema_version": "1.1", "generated_at": generated_at,
+        "schema_version": "1.2", "generated_at": generated_at,
         "demo": False,
         "summary": {
             "transactions": len(all_txs), "statements": len(statements),
@@ -194,6 +153,8 @@ def analyze(statements: list[Statement], generated_at: str) -> dict:
         "transactions": [dict(t.serialize(), category=category_of(t)) for t in all_txs],
         "findings": issues,
         "analytics": build_insights(all_txs, issues, category_of),
+        "matching_audit": match_audit,
+        "reconciliation_quality": reconciliation_quality(statements, issues, chronological),
         "categories": [{"label":k,"amount":amt(v)} for k,v in sorted(spending.items(), key=lambda kv:kv[1],reverse=True) if v],
         "months": [{"month":m,"debits":amt(v["debits"]),"credits":amt(v["credits"])} for m,v in sorted(monthly.items())],
         "warnings": warnings,
@@ -201,6 +162,7 @@ def analyze(statements: list[Statement], generated_at: str) -> dict:
             "This is an automated document review, not bank-ledger authentication or proof of theft.",
             "A valid SHA-256 digest proves byte matching, not that the original statement was authentic.",
             "Flagged transactions may have legitimate explanations. Do not add finding amounts together.",
-            "Cross-bank matching uses only the statements supplied; it cannot trace funds through banking networks.",
+            "Cross-bank matching is a one-to-one candidate comparison of uploaded rows, not proof of financial settlement.",
+            "Arithmetic checkability does not establish that statement rows are complete or authentic.",
         ],
     }
