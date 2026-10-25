@@ -12,7 +12,7 @@ from .analysis import analyze
 from .fixtures import demo
 
 BASE = Path(__file__).resolve().parents[1]
-app = FastAPI(title="DisputeProof NG · MoneyTrace", version="0.3.0", docs_url=None, redoc_url=None)
+app = FastAPI(title="DisputeProof NG · MoneyTrace", version="0.4.0", docs_url=None, redoc_url=None)
 
 
 def local_upload_allowed(request: Request) -> bool:
@@ -23,6 +23,7 @@ def local_upload_allowed(request: Request) -> bool:
     """
     return (
         os.getenv("MONEYTRACE_UPLOAD_MODE", "demo").lower() == "local"
+        and not any(os.getenv(name) for name in ("VERCEL", "CF_PAGES", "K_SERVICE", "RENDER"))
         and request.url.hostname in {"127.0.0.1", "localhost", "testserver"}
         and request.client is not None
         and request.client.host in {"127.0.0.1", "::1", "testclient"}
@@ -69,7 +70,7 @@ app.add_middleware(SecurityHeaders)
 
 @app.get("/api/health")
 def health():
-    return {"status":"ok", "mode":"demo_only_by_default", "storage":"none", "version":"0.3.0"}
+    return {"status":"ok", "mode":"demo_only_by_default", "storage":"none", "version":"0.4.0"}
 
 
 @app.get("/api/config")
