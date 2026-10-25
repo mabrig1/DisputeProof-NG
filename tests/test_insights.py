@@ -15,7 +15,7 @@ def test_daily_monthly_and_account_totals():
     s=parse('Date,Description,Debit,Credit,Balance\n2026-08-01,Opening,0,100.10,100.10\n2026-08-04,POS cafe,20.05,0,80.05\n2026-09-01,POS shop,10.05,0,70.00\n')
     report=analyze([s],NOW)
     a=report['analytics']
-    assert report['schema_version']=='1.1'
+    assert report['schema_version']=='1.2'
     assert len(a['monthly'])==2
     assert a['monthly'][0]['credits']=='100.10'
     assert a['monthly'][0]['debits']=='20.05'
