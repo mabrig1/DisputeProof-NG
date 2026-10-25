@@ -35,3 +35,6 @@
 .viz-swatch-5{background:#5e9b91}.viz-stroke-5{stroke:#5e9b91}
 .viz-swatch-6{background:#b3738f}.viz-stroke-6{stroke:#b3738f}
 .viz-swatch-7{background:#7893a6}.viz-stroke-7{stroke:#7893a6}
+
+/* v0.4 audit coverage and matching candidate summaries. */
+.viz-quality-bar{width:110px;max-width:100%;height:9px;background:#e6ecef;border-radius:99px;overflow:hidden;margin-bottom:5px}.viz-quality-bar span{display:block;height:100%;background:#0f766e;border-radius:99px}.viz-candidate-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:12px}.viz-candidate-grid>div{background:#f2f8f6;border:1px solid #d7e8e2;border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:8px}.viz-candidate-grid b{font-size:27px;color:#0b6058}.viz-candidate-grid span{font-size:12px;line-height:1.4;color:#4f6068}.viz-quality-bar+small{white-space:nowrap;display:block}
